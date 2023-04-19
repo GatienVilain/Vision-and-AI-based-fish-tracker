@@ -20,6 +20,7 @@ from deep_sort_pytorch.utils.parser import get_config
 from deep_sort_pytorch.deep_sort import DeepSort
 from collections import deque
 import numpy as np
+#to define the color palette,for example if we have multiple class we need different color to recognise them
 palette = (2 ** 11 - 1, 2 ** 15 - 1, 2 ** 20 - 1)
 data_deque = {}
 
@@ -35,47 +36,28 @@ def init_tracker():
                             nms_max_overlap=cfg_deep.DEEPSORT.NMS_MAX_OVERLAP, max_iou_distance=cfg_deep.DEEPSORT.MAX_IOU_DISTANCE,
                             max_age=cfg_deep.DEEPSORT.MAX_AGE, n_init=cfg_deep.DEEPSORT.N_INIT, nn_budget=cfg_deep.DEEPSORT.NN_BUDGET,
                             use_cuda=True)
-##########################################################################################
+
+#In this function we convert the boynding box received from yolo to a format that is compatible
+# with DeepSORT.We convert x and y coordinattes center coordinates which is x_c and y_c and return
+# width and height of the bounding boxes
 def xyxy_to_xywh(*xyxy):
     """" Calculates the relative bounding box from absolute pixel values. """
     bbox_left = min([xyxy[0].item(), xyxy[2].item()])
     bbox_top = min([xyxy[1].item(), xyxy[3].item()])
-    bbox_w = abs(xyxy[0].item() - xyxy[2].item())
-    bbox_h = abs(xyxy[1].item() - xyxy[3].item())
-    x_c = (bbox_left + bbox_w / 2)
-    y_c = (bbox_top + bbox_h / 2)
-    w = bbox_w
-    h = bbox_h
+    w = abs(xyxy[0].item() - xyxy[2].item())
+    h = abs(xyxy[1].item() - xyxy[3].item())
+    x_c = (bbox_left +w / 2)
+    y_c = (bbox_top +h / 2)
     return x_c, y_c, w, h
 
-def xyxy_to_tlwh(bbox_xyxy):
-    tlwh_bboxs = []
-    for i, box in enumerate(bbox_xyxy):
-        x1, y1, x2, y2 = [int(i) for i in box]
-        top = x1
-        left = y1
-        w = int(x2 - x1)
-        h = int(y2 - y1)
-        tlwh_obj = [top, left, w, h]
-        tlwh_bboxs.append(tlwh_obj)
-    return tlwh_bboxs
 
 def compute_color_for_labels(label):
     """
-    Simple function that adds fixed color depending on the class
+    Function that add color for each class
     """
-    if label == 0: #person
-        color = (85,45,255)
-    elif label == 2: # Car
-        color = (222,82,175)
-    elif label == 3:  # Motobike
-        color = (0, 204, 255)
-    elif label == 5:  # Bus
-        color = (0, 149, 255)
-    else:
-        color = [int((p * (label ** 2 - label + 1)) % 255) for p in palette]
+    color = [int((p * (label ** 2 - label + 1)) % 255) for p in palette]
     return tuple(color)
-
+#With this function we will create a rectangle over the bounding box to put the label text
 def draw_border(img, pt1, pt2, color, thickness, r, d):
     x1,y1 = pt1
     x2,y2 = pt2
@@ -105,7 +87,9 @@ def draw_border(img, pt1, pt2, color, thickness, r, d):
     cv2.circle(img, (x2 -r, y2-r), 2, color, 12)
     
     return img
-
+#In UI_box function we are passing cv2.rectangle to create a rectangle around our object
+#We are also calling the draw_border function to create a rounded rectangle
+#We are also using cv2.text,to add the label for example what object it is
 def UI_box(x, img, color=None, label=None, line_thickness=None):
     # Plots one bounding box on image img
     tl = line_thickness or round(0.002 * (img.shape[0] + img.shape[1]) / 2) + 1  # line/font thickness
@@ -121,11 +105,14 @@ def UI_box(x, img, color=None, label=None, line_thickness=None):
         cv2.putText(img, label, (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
 
 
-
+#In this function we are callig the above UI_box function to draw bounding boxes etc
+#We are also drawing the trails for tracking
 def draw_boxes(img, bbox, names,object_id, identities=None, offset=(0, 0)):
-    #cv2.line(img, line[0], line[1], (46,162,112), 3)
-
+    #Just checking the dimension of the frame
     height, width, _ = img.shape
+    #We will store the unique id of the detected object ,until the object is in the frame
+    #if the object disappears from the frame we will remove the unique id from the list and save
+    #the unique id of the new object appearing in the frame
     # remove tracked point from buffer if object is lost
     for key in list(data_deque):
       if key not in identities:
@@ -138,15 +125,14 @@ def draw_boxes(img, bbox, names,object_id, identities=None, offset=(0, 0)):
         y1 += offset[1]
         y2 += offset[1]
 
-        # code to find center of bottom edge
+        #find center of bottom edge
         center = (int((x2+x1)/ 2), int((y2+y2)/2))
 
-        # get ID of object
+        #ID of object
         id = int(identities[i]) if identities is not None else 0
-
         # create new buffer for new object
         if id not in data_deque:  
-          data_deque[id] = deque(maxlen= 64)
+          data_deque[id] = deque(maxlen= 30)
         color = compute_color_for_labels(object_id[i])
         obj_name = names[object_id[i]]
         label = '{}{:d}'.format("", id) + ":"+ '%s' % (obj_name)
@@ -160,7 +146,7 @@ def draw_boxes(img, bbox, names,object_id, identities=None, offset=(0, 0)):
             if data_deque[id][i - 1] is None or data_deque[id][i] is None:
                 continue
             # generate dynamic thickness of trails
-            thickness = int(np.sqrt(64 / float(i + i)) * 1.5)
+            thickness = int(np.sqrt(30 / float(i + i)) * 1.5)
             # draw trails
             cv2.line(img, data_deque[id][i - 1], data_deque[id][i], color, thickness)
     return img
