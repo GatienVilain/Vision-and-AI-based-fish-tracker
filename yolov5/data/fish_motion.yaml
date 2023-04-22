@@ -1,0 +1,10 @@
+#train: /content/gdrive/MyDrive/Data Science/Projet Truite/dataset/img/train
+#val: /content/gdrive/MyDrive/Data Science/Projet Truite/dataset/img/test
+
+train: ../dataset_motion/images/train
+val: ../dataset_motion/images/val
+test: ../dataset_motion/images/test
+
+nc: 1
+
+names: ['Truite']
