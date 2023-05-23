@@ -3,8 +3,8 @@ This aims to use the yolo algorithm with a tracking algorithm to recognize trout
 We tried using sort and deepsort as tracking algorithm.
 While we could not make deepsort work properly, the method to use our model using sort is detailed further in this file.
 On the other branches, you can find :
-  - a branch containint python code to create new dataset by annoting image using cv2, 
-  - a branch containing the deepsort part we tried but we had some issues with libraries and computational power on google colab so the result is not satisfacotry
+  - a branch [Dataset-Creator](https://github.com/GatienVilain/Vision-and-AI-based-fish-tracker/tree/Dataset-Creator) containing python code to create new dataset by annoting image using cv2, 
+  - a branch [DeepSORT](https://github.com/GatienVilain/Vision-and-AI-based-fish-tracker/tree/DeepSORT) containing the deepsort part we tried but we had some issues with libraries and computational power on google colab so the result is not satisfacotry
 
 
 # FishTracking : Sort Method
@@ -31,7 +31,9 @@ How to use the notebook:
 ------------------------
 
 First, you need to clone the directory with this command
-- git clone https://github.com/GatienVilain/Vision-and-AI-based-fish-tracker.git 
+```
+git clone https://github.com/GatienVilain/Vision-and-AI-based-fish-tracker.git 
+```
 
 Then launch the notebook "main.ipynb" using jupyter or your favorite IDE.
 
