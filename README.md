@@ -1,3 +1,12 @@
+# Vision and AI based fish tracker
+This aims to use the yolo algorithm with a tracking algorithm to recognize trouts in fishtanks videos.
+We tried using sort and deepsort as tracking algorithm.
+While we could not make deepsort work properly, the method to use our model using sort is detailed further in this file.
+On the other branches, you can find :
+  - a branch containint python code to create new dataset by annoting image using cv2, 
+  - a branch containing the deepsort part we tried but we had some issues with libraries and computational power on google colab
+
+
 # FishTracking : Sort Method
 
 ![method proccessing chain](.github/images/process_chain.png)
