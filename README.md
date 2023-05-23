@@ -1,4 +1,7 @@
 # FishTracking (test DeepSort with Yolov8)
 
-FishDetectionAndTracking is the main code executed on google collab, we have modified predict.py in the YOLOv8 folder.
-We do not use TrainShadow because it is a CNN model that we created to dissociate fish from shadow in case the detection model was not good enough. We don’t have data on that model, so it hasn’t been trained.
+Due to issues with libraries and to computational issues on google colab, the result is not staisfactory.
+Nevertheless, you can try it by launching the 'DeepSORT_pipeline.ipynb' on colab and following the instructions.
+
+'FishDetectionAndTracking.ipynb' is the file used to train the model.
+'TrainShadow' is a python file containing some work we did to try to recognize shadows using a CNNN. The goal was to implement it in our model to better distinguish shadows from fishes but we did not have the time to go through with it.
