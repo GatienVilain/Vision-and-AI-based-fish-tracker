@@ -4,7 +4,7 @@ We tried using sort and deepsort as tracking algorithm.
 While we could not make deepsort work properly, the method to use our model using sort is detailed further in this file.
 On the other branches, you can find :
   - a branch containint python code to create new dataset by annoting image using cv2, 
-  - a branch containing the deepsort part we tried but we had some issues with libraries and computational power on google colab
+  - a branch containing the deepsort part we tried but we had some issues with libraries and computational power on google colab so the result is not satisfacotry
 
 
 # FishTracking : Sort Method
@@ -29,6 +29,11 @@ In yolov5, the path used to the weight is `Fish_tracking\yolov5\runs\train\model
 
 How to use the notebook:
 ------------------------
+
+First, you need to clone the directory with this command
+- git clone https://github.com/GatienVilain/Vision-and-AI-based-fish-tracker.git 
+
+Then launch the notebook "main.ipynb" using jupyter or your favorite IDE.
 
 The notebook is split in different part corresponding to a step in the pipeline:
 
